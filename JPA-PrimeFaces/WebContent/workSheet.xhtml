@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui">
+<h:body>
+	<ui:composition template="templates/template.xhtml">
+		<ui:define name="content">
+			<h:form id="workSheetForm">
+				<p:growl id="msgs" showDetail="true" />
+				<p:timeline id="timeline" value="#{timeLineView.model}" height="250px" selectable="#{timeLineView.selectable}" zoomable="#{timeLineView.zoomable}" moveable="#{timeLineView.moveable}"
+					stackEvents="#{timeLineView.stackEvents}" axisOnTop="#{timeLineView.axisOnTop}" eventStyle="#{timeLineView.eventStyle}" showCurrentTime="#{timeLineView.showCurrentTime}"
+					showNavigation="#{timeLineView.showNavigation}" editable="true" widgetVar="tl">
+
+					<p:ajax event="select" listener="#{timeLineView.onSelect}" />
+					<p:ajax event="changed" update="workSheetForm:workSheetTable" listener="#{timeLineView.onChange}" />
+				</p:timeline>
+				<p:dataTable id="workSheetTable" var="worksheet" editable="true" value="#{workSheetBean.allWorkSheets}" paginator="true" reflow="true" rows="5" stickyHeader="true">
+					<f:facet name="header">
+						<h:outputText value="Munkalapok" />
+					</f:facet>
+
+					<p:ajax event="rowEdit" listener="#{workSheetBean.onRowEdit}" update=":workSheetForm:msgs" />
+					<p:ajax event="rowEditCancel" listener="#{workSheetBean.onRowCancel}" update=":workSheetForm:msgs" />
+
+					<!-- p:column headerText="Állapot">
+						<p:cellEditor>
+							<f:facet name="output">
+								<div style="text-align: center;">
+									<p:selectBooleanButton disabled="true" value="#{worksheet.finished}" onLabel="Kész" offLabel="Folyamatban" onIcon="ui-icon-check" offIcon="ui-icon-close" style="center;width:150px" />
+								</div>
+							</f:facet>
+							<f:facet name="input">
+								<div style="text-align: center;">
+									<p:selectBooleanButton value="#{worksheet.finished}" onLabel="Kész" offLabel="Folyamatban" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:150px;text-align: center;" />
+								</div>
+							</f:facet>
+						</p:cellEditor>
+					</p:column -->
+
+					<p:column headerText="Leírás">
+						<p:cellEditor>
+							<f:facet name="output">
+								<h:outputText value="#{worksheet.description}" />
+							</f:facet>
+							<f:facet name="input">
+								<p:inputText value="#{worksheet.description}" style="width:100%" />
+							</f:facet>
+						</p:cellEditor>
+					</p:column>
+
+					<p:column headerText="Munkavégző(k)">
+						<p:cellEditor>
+							<f:facet name="output">
+								<h:selectManyListbox value="#{workSheetBean.selectedPersonIDs}" size="4" disabled="true">
+									<f:selectItems value="#{worksheet.persons}" var="person" itemValue="#{person.id}" itemLabel="#{person.name}" />
+								</h:selectManyListbox>
+							</f:facet>
+							<f:facet name="input">
+								<h:selectManyListbox value="#{workSheetBean.selectedPersonIDs}" size="4">
+									<f:selectItems value="#{workSheetBean.availablePersons}" var="person" itemValue="#{person.id}" itemLabel="#{person.name}" />
+								</h:selectManyListbox>
+							</f:facet>
+						</p:cellEditor>
+					</p:column>
+
+					<p:column headerText="Kezdő dátum">
+						<p:cellEditor>
+							<f:facet name="output">
+								<h:outputText value="#{worksheet.startDate}">
+									<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss" locale="hu" timeZone="Europe/Budapest" />
+								</h:outputText>
+							</f:facet>
+							<f:facet name="input">
+								<p:calendar value="#{worksheet.startDate}" locale="hu" timeZone="Europe/Budapest" navigator="true" pattern="yyyy-MM-dd HH:mm:ss" style="width:100%" />
+							</f:facet>
+						</p:cellEditor>
+					</p:column>
+
+					<p:column headerText="Befejező dátum">
+						<p:cellEditor>
+							<f:facet name="output">
+								<h:outputText value="#{worksheet.endDate}">
+									<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss" locale="hu" timeZone="Europe/Budapest" />
+								</h:outputText>
+							</f:facet>
+							<f:facet name="input">
+								<p:calendar value="#{worksheet.endDate}" locale="hu" timeZone="Europe/Budapest" navigator="true" pattern="yyyy-MM-dd HH:mm:ss" style="width:100%" />
+							</f:facet>
+						</p:cellEditor>
+					</p:column>
+
+					<p:column headerText="Határidő">
+						<p:cellEditor>
+							<f:facet name="output">
+								<h:outputText value="#{worksheet.dueDate}">
+									<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss" locale="hu" timeZone="Europe/Budapest" />
+								</h:outputText>
+							</f:facet>
+							<f:facet name="input">
+								<p:calendar value="#{worksheet.dueDate}" locale="hu" timeZone="Europe/Budapest" navigator="true" pattern="yyyy-MM-dd HH:mm:ss" style="width:100%" />
+							</f:facet>
+						</p:cellEditor>
+					</p:column>
+
+					<p:column style="width:32px">
+						<p:rowEditor style="font-size:2em" />
+					</p:column>
+				</p:dataTable>
+				<h3>Export Page Data Only</h3>
+				<h:commandLink>
+					<p:graphicImage name="/images/excel.png" />
+					<p:dataExporter type="xls" target="workSheetTable" fileName="workSheets" pageOnly="true" encoding="CP1252" />
+				</h:commandLink>
+
+				<h:commandLink>
+					<p:graphicImage name="/images/pdf.png" />
+					<p:dataExporter type="pdf" target="workSheetTable" fileName="workSheets" pageOnly="true" encoding="CP1252" />
+				</h:commandLink>
+
+				<h:commandLink>
+					<p:graphicImage name="/images/csv.png" />
+					<p:dataExporter type="csv" target="workSheetTable" fileName="workSheets" pageOnly="true" encoding="CP1252" />
+				</h:commandLink>
+
+				<h:commandLink>
+					<p:graphicImage name="/images/xml.png" />
+					<p:dataExporter type="xml" target="workSheetTable" fileName="workSheets" pageOnly="true" encoding="CP1252" />
+				</h:commandLink>
+
+			</h:form>
+			<p />
+			<h:form>
+				<p:fieldset legend="Új munka">
+					<h:outputText value="Leírás:" />
+					<h:inputText id="description" value="#{workSheetBean.workSheet.description}" />
+					<p:message for="description" />
+					<h:commandButton value="Hozzáad" actionListener="#{workSheetBean.addNew}">
+						<f:ajax execute="@form" render="@all" />
+					</h:commandButton>
+				</p:fieldset>
+			</h:form>
+			<h:link value="Back To Home" outcome="index" />
+		</ui:define>
+	</ui:composition>
+</h:body>
+</html>

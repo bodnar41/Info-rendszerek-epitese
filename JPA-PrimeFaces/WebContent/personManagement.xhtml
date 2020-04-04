@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui">
+<h:body>
+	<ui:composition template="templates/template.xhtml">
+		<ui:define name="content">
+			<h:form id="personForm">
+				<p:growl id="msgs" showDetail="true" />
+				<p:dataTable id="personTable" var="person" editable="true" value="#{personBean.availablePersons}" paginator="true" reflow="true" rows="10" stickyHeader="true">
+					<f:facet name="header">
+						<h:outputText value="Személyzet" />
+					</f:facet>
+
+					<p:ajax event="rowEdit" listener="#{personBean.onRowEdit}" update=":personForm:msgs" />
+					<p:ajax event="rowEditCancel" listener="#{personBean.onRowCancel}" update=":personForm:msgs" />
+
+					<p:column headerText="Név">
+						<p:cellEditor>
+							<f:facet name="output">
+								<h:outputText value="#{person.name}" />
+							</f:facet>
+							<f:facet name="input">
+								<p:inputText value="#{person.name}" style="width:100%" />
+							</f:facet>
+						</p:cellEditor>
+					</p:column>
+
+					<p:column headerText="Szín">
+						<p:cellEditor>
+							<f:facet name="output">
+								<p:colorPicker value="#{person.displayColor}" />
+							</f:facet>
+							<f:facet name="input">
+								<p:colorPicker value="#{person.displayColor}" style="padding-left:10px" />
+							</f:facet>
+						</p:cellEditor>
+					</p:column>
+
+					<p:column style="width:32px">
+						<p:rowEditor style="font-size:2em" />
+					</p:column>
+				</p:dataTable>
+			</h:form>
+		</ui:define>
+	</ui:composition>
+</h:body>
+</html>

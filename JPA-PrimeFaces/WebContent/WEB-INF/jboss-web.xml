@@ -1,0 +1,4 @@
+<jboss-web>
+      <!--security-domain>primefacesDomain</security-domain -->
+      <security-domain>primefacesDomainMySQL</security-domain>
+</jboss-web>
