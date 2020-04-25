@@ -1,0 +1,73 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+	<div align="center">
+		<br />
+		<h:outputText value="Customers list" styleClass="contentsTitle" />
+		<h:form>
+		<h:dataTable value="#{backingCustomers.findAllCustomers()}"
+			var="customer" styleClass="table" headerClass="table-header"
+			footerClass="table-footer" rowClasses="table-odd-row,table-even-row">
+
+			<h:column>
+				<h:commandLink value="Edit"
+					action="#{backingCustomers.edit(customer)}" />
+			</h:column>
+
+			<h:column>
+				<!-- column header -->
+				<f:facet name="header">Id</f:facet>
+				<!-- row record -->
+	    				#{customer.id}
+	    			</h:column>
+
+			<h:column>
+				<f:facet name="header">Name</f:facet>
+	    				#{customer.firstName}
+	    			</h:column>
+
+			<h:column>
+				<f:facet name="header">Cím</f:facet>
+	    				#{customer.cim}
+	    			</h:column>
+
+			<h:column>
+				<f:facet name="header">Bank</f:facet>
+	    				#{customer.company}
+	    			</h:column>
+
+			<h:column>
+				<f:facet name="header">Customer number</f:facet>
+	    				#{customer.emplNumber}
+	    			</h:column>
+
+			<h:column>
+				<f:facet name="header">Money</f:facet>
+				<h:outputText value="#{customer.salary}">
+					<f:convertNumber currencySymbol="€" type="currency" />
+				</h:outputText>
+			</h:column>
+
+			<h:column>
+				<h:commandLink value="Delete"
+					action="#{backingCustomers.delete(customer)}" />
+			</h:column>
+
+			<f:facet name="footer">
+				<h:outputText
+					value="Total of customers: #{backingCustomers.findAllCustomers().size()}" />
+			</f:facet>
+
+		</h:dataTable>
+		<br />
+				<h:commandButton value="Add customer" action="add-customer"/>
+		</h:form>
+	</div>
+	<br />
+
+</ui:composition>
